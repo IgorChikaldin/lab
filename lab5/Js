@@ -1,0 +1,23 @@
+const ageInput = document.getElementById("ageInput");
+const checkButton = document.getElementById("checkButton");
+const result = document.getElementById("result");
+
+checkButton.addEventListener("click", function () {
+    const age = Number(ageInput.value);
+
+    result.className = "";
+
+    if (ageInput.value === "" || age < 0) {
+        result.textContent = "Введите корректный возраст!";
+        result.classList.add("error");
+    } else if (age < 13) {
+        result.textContent = "Вы ребёнок.";
+        result.classList.add("child");
+    } else if (age < 18) {
+        result.textContent = "Вы подросток.";
+        result.classList.add("teenager");
+    } else {
+        result.textContent = "Вы взрослый.";
+        result.classList.add("adult");
+    }
+});
