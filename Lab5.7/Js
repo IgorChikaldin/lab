@@ -1,0 +1,112 @@
+const temperatureInput = document.getElementById("temperature");
+const fromUnit = document.getElementById("fromUnit");
+const toUnit = document.getElementById("toUnit");
+const convertButton = document.getElementById("convertButton");
+const result = document.getElementById("result");
+const message = document.getElementById("message");
+
+function celsiusToFahrenheit(celsius) {
+    return (celsius * 9 / 5) + 32;
+}
+
+function fahrenheitToCelsius(fahrenheit) {
+    return (fahrenheit - 32) * 5 / 9;
+}
+
+function celsiusToKelvin(celsius) {
+    return celsius + 273.15;
+}
+
+function kelvinToCelsius(kelvin) {
+    return kelvin - 273.15;
+}
+
+function convertTemperature() {
+    let temperature = Number(temperatureInput.value);
+    const from = fromUnit.value;
+    const to = toUnit.value;
+
+    if (temperatureInput.value === "" || isNaN(temperature)) {
+        result.textContent = "Введите корректное число!";
+        result.style.color = "red";
+        return;
+    }
+
+    if (from === "C" && temperature < -273.15) {
+        result.textContent = "Ошибка: ниже абсолютного нуля!";
+        result.style.color = "red";
+        return;
+    }
+
+    if (from === "F" && temperature < -459.67) {
+        result.textContent = "Ошибка: ниже абсолютного нуля!";
+        result.style.color = "red";
+        return;
+    }
+
+    if (from === "K" && temperature < 0) {
+        result.textContent = "Ошибка: температура не может быть ниже 0 K!";
+        result.style.color = "red";
+        return;
+    }
+
+    let celsius;
+
+    if (from === "C") {
+        celsius = temperature;
+    } else if (from === "F") {
+        celsius = fahrenheitToCelsius(temperature);
+    } else if (from === "K") {
+        celsius = kelvinToCelsius(temperature);
+    }
+
+    let convertedTemperature;
+
+    if (to === "C") {
+        convertedTemperature = celsius;
+    } else if (to === "F") {
+        convertedTemperature = celsiusToFahrenheit(celsius);
+    } else if (to === "K") {
+        convertedTemperature = celsiusToKelvin(celsius);
+    }
+
+    const units = ["C", "F", "K"];
+    let unitName = "";
+
+    for (let i = 0; i < units.length; i++) {
+        if (units[i] === to) {
+            if (to === "C") {
+                unitName = "°C";
+            } else if (to === "F") {
+                unitName = "°F";
+            } else {
+                unitName = "K";
+            }
+        }
+    }
+
+    result.textContent =
+        `${temperature} ${from} = ${convertedTemperature.toFixed(2)} ${unitName}`;
+
+    result.style.color = "green";
+    result.style.fontWeight = "bold";
+
+    message.textContent = "Конвертация выполнена успешно!";
+}
+
+convertButton.addEventListener("click", convertTemperature);
+
+temperatureInput.addEventListener("input", function () {
+    message.textContent = "Введите значение и нажмите «Конвертировать».";
+    message.style.color = "black";
+});
+
+fromUnit.addEventListener("change", function () {
+    result.textContent = "Единица измерения изменена.";
+    result.style.color = "blue";
+});
+
+toUnit.addEventListener("change", function () {
+    result.textContent = "Выберите нужные единицы и нажмите кнопку.";
+    result.style.color = "blue";
+});
