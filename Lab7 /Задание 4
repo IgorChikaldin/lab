@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Меню, акции и адрес нашего кафе">
+    <title>Кафе «Вкусное место»</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <a href="#" class="logo" aria-label="Главная">
+                ☕ Кафе
+            </a>
+
+            <div class="cart-info">
+                🛒 Корзина: <span id="cart-count">0</span>
+                <span class="cart-divider">|</span>
+                <span id="cart-total">0 ₸</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <p class="eyebrow">УЮТНОЕ МЕСТО ДЛЯ ВСТРЕЧ</p>
+            <h1>Кафе «Вкусное место»</h1>
+            <p>Свежие блюда, ароматный кофе и приятная атмосфера.</p>
+        </section>
+
+        <nav class="tabs" aria-label="Разделы кафе">
+            <button class="tab active"
+                    data-tab="menu"
+                    aria-selected="true">
+                🍽️ Меню
+            </button>
+<button class="tab"
+        data-tab="cart"
+        aria-selected="false">
+    🛒 Корзина
+</button>
+
+            <button class="tab"
+                    data-tab="promotions"
+                    aria-selected="false">
+                🎁 Акции
+            </button>
+
+            <button class="tab"
+                    data-tab="address"
+                    aria-selected="false">
+                📍 Адрес
+            </button>
+        </nav>
+
+        <section id="content" class="content" aria-live="polite">
+            <!-- Контент формируется в app.js -->
+        </section>
+
+        <footer class="footer">
+            © 2026 Кафе «Вкусное место»
+        </footer>
+    </main>
+</body>
+</html>
