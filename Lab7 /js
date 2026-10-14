@@ -1,0 +1,420 @@
+const dishes = [
+    {
+        id: 1,
+        name: "Бургер",
+        description: "Говяжья котлета, сыр, овощи и соус.",
+        price: 2500,
+        emoji: "🍔"
+    },
+    {
+        id: 2,
+        name: "Пицца",
+        description: "Томатный соус, сыр и ароматные травы.",
+        price: 3200,
+        emoji: "🍕"
+    },
+    {
+        id: 3,
+        name: "Паста",
+        description: "Паста со сливочным соусом и сыром.",
+        price: 2800,
+        emoji: "🍝"
+    },
+    {
+        id: 4,
+        name: "Салат",
+        description: "Свежие овощи, зелень и заправка.",
+        price: 1800,
+        emoji: "🥗"
+    },
+    {
+        id: 5,
+        name: "Кофе",
+        description: "Ароматный кофе из свежих зёрен.",
+        price: 900,
+        emoji: "☕"
+    },
+    {
+        id: 6,
+        name: "Чизкейк",
+        description: "Нежный десерт с творожным сыром.",
+        price: 1500,
+        emoji: "🍰"
+    }
+];
+
+const promotions = [
+    {
+        icon: "☕",
+        title: "Кофе в подарок",
+        description: "Закажите два десерта и получите кофе.",
+        label: "Подарок"
+    },
+    {
+        icon: "🍕",
+        title: "Скидка 15%",
+        description: "Скидка на пиццу при покупке двух штук.",
+        label: "-15%"
+    },
+    {
+        icon: "🍰",
+        title: "Сладкий бонус",
+        description: "Скидка 10% на чизкейк после 18:00.",
+        label: "-10%"
+    }
+];
+
+const content = document.getElementById("content");
+const tabs = document.querySelectorAll(".tab");
+const cartCount = document.getElementById("cart-count");
+const cartTotal = document.getElementById("cart-total");
+
+const cart = new Map();
+
+let currentTab = "menu";
+
+function formatPrice(price) {
+    return price.toLocaleString("ru-RU") + " ₸";
+}
+
+function updateCart() {
+    let count = 0;
+    let total = 0;
+
+    cart.forEach((quantity, id) => {
+        const dish = dishes.find(item => item.id === id);
+
+        if (dish) {
+            count += quantity;
+            total += dish.price * quantity;
+        }
+    });
+
+    cartCount.textContent = count;
+    cartTotal.textContent = formatPrice(total);
+}
+
+function renderMenu() {
+    content.replaceChildren();
+
+    const title = document.createElement("h2");
+    title.className = "section-title";
+    title.textContent = "Наше меню";
+
+    const description = document.createElement("p");
+    description.className = "section-description";
+    description.textContent =
+        "Выбирайте любимые блюда и добавляйте их в корзину.";
+
+    const grid = document.createElement("div");
+    grid.className = "menu-grid";
+
+    dishes.forEach(dish => {
+        const card = document.createElement("article");
+        card.className = "dish-card";
+
+        const image = document.createElement("div");
+        image.className = "dish-image";
+        image.setAttribute("aria-hidden", "true");
+        image.textContent = dish.emoji;
+
+        const body = document.createElement("div");
+        body.className = "dish-body";
+
+        const name = document.createElement("h3");
+        name.textContent = dish.name;
+
+        const text = document.createElement("p");
+        text.className = "dish-description";
+        text.textContent = dish.description;
+
+        const bottom = document.createElement("div");
+        bottom.className = "dish-bottom";
+
+        const price = document.createElement("span");
+        price.className = "price";
+        price.textContent = formatPrice(dish.price);
+
+        const button = document.createElement("button");
+        button.className = "add-button";
+        button.textContent = "В корзину";
+
+        button.addEventListener("click", () => {
+            const quantity = cart.get(dish.id) || 0;
+            cart.set(dish.id, quantity + 1);
+
+            updateCart();
+
+            button.textContent = "Добавлено ✓";
+
+            setTimeout(() => {
+                button.textContent = "В корзину";
+            }, 1000);
+        });
+
+        bottom.append(price, button);
+        body.append(name, text, bottom);
+        card.append(image, body);
+        grid.append(card);
+    });
+
+    content.append(title, description, grid);
+}
+
+function renderPromotions() {
+    content.replaceChildren();
+
+    const title = document.createElement("h2");
+    title.className = "section-title";
+    title.textContent = "Наши акции";
+
+    const description = document.createElement("p");
+    description.className = "section-description";
+    description.textContent = "Приятные бонусы для наших гостей.";
+
+    const grid = document.createElement("div");
+    grid.className = "promo-grid";
+
+    promotions.forEach(promo => {
+        const card = document.createElement("article");
+        card.className = "promo-card";
+
+        const icon = document.createElement("div");
+        icon.className = "promo-icon";
+        icon.textContent = promo.icon;
+
+        const label = document.createElement("span");
+        label.className = "promo-label";
+        label.textContent = promo.label;
+
+        const heading = document.createElement("h3");
+        heading.textContent = promo.title;
+
+        const text = document.createElement("p");
+        text.textContent = promo.description;
+
+        card.append(icon, label, heading, text);
+        grid.append(card);
+    });
+
+    content.append(title, description, grid);
+}
+
+function renderAddress() {
+    content.replaceChildren();
+
+    const title = document.createElement("h2");
+    title.className = "section-title";
+    title.textContent = "Как нас найти";
+
+    const description = document.createElement("p");
+    description.className = "section-description";
+    description.textContent = "Будем рады видеть вас в нашем кафе!";
+
+    const layout = document.createElement("div");
+    layout.className = "address-layout";
+
+    const info = document.createElement("article");
+    info.className = "info-card";
+
+    const addressTitle = document.createElement("h3");
+    addressTitle.textContent = "📍 Наш адрес";
+
+    const address = document.createElement("p");
+    address.textContent = "г. Алматы, ул. Абая, 10";
+
+    const hoursTitle = document.createElement("h3");
+    hoursTitle.textContent = "🕒 Время работы";
+
+    const hours = document.createElement("p");
+    hours.textContent = "Ежедневно: 09:00–22:00";
+
+    const phoneTitle = document.createElement("h3");
+    phoneTitle.textContent = "📞 Телефон";
+
+    const phone = document.createElement("p");
+    phone.textContent = "+7 (700) 123-45-67";
+
+    info.append(
+        addressTitle,
+        address,
+        hoursTitle,
+        hours,
+        phoneTitle,
+        phone
+    );
+
+    const map = document.createElement("div");
+    map.className = "map-placeholder";
+
+    const mapContent = document.createElement("div");
+
+    const mapIcon = document.createElement("span");
+    mapIcon.textContent = "🗺️";
+
+    const mapText = document.createElement("p");
+    mapText.textContent = "Ждём вас в нашем кафе!";
+
+    mapContent.append(mapIcon, mapText);
+    map.append(mapContent);
+
+    layout.append(info, map);
+    content.append(title, description, layout);
+}
+
+function renderCart() {
+    content.replaceChildren();
+
+    const title = document.createElement("h2");
+    title.className = "section-title";
+    title.textContent = "Ваша корзина";
+
+    const description = document.createElement("p");
+    description.className = "section-description";
+    description.textContent =
+        "Здесь находятся выбранные вами блюда.";
+
+    content.append(title, description);
+
+    if (cart.size === 0) {
+        const empty = document.createElement("p");
+        empty.className = "info-card";
+        empty.textContent =
+            "🛒 Корзина пуста. Добавьте блюда из меню!";
+
+        content.append(empty);
+        return;
+    }
+
+    const grid = document.createElement("div");
+    grid.className = "cart-list";
+
+    let total = 0;
+
+    cart.forEach((quantity, id) => {
+        const dish = dishes.find(item => item.id === id);
+
+        if (!dish) return;
+
+        total += dish.price * quantity;
+
+        const card = document.createElement("article");
+        card.className = "cart-item";
+
+        const info = document.createElement("div");
+        info.className = "cart-item-info";
+
+        const name = document.createElement("h3");
+        name.textContent = `${dish.emoji} ${dish.name}`;
+
+        const price = document.createElement("p");
+        price.textContent =
+            `${formatPrice(dish.price)} × ${quantity} = ` +
+            formatPrice(dish.price * quantity);
+
+        info.append(name, price);
+
+        const controls = document.createElement("div");
+        controls.className = "cart-controls";
+
+        const minus = document.createElement("button");
+        minus.className = "quantity-button";
+        minus.textContent = "−";
+        minus.setAttribute(
+            "aria-label",
+            `Уменьшить количество: ${dish.name}`
+        );
+
+        minus.addEventListener("click", () => {
+            if (quantity <= 1) {
+                cart.delete(id);
+            } else {
+                cart.set(id, quantity - 1);
+            }
+
+            updateCart();
+            renderCart();
+        });
+
+        const count = document.createElement("span");
+        count.className = "quantity";
+        count.textContent = quantity;
+
+        const plus = document.createElement("button");
+        plus.className = "quantity-button";
+        plus.textContent = "+";
+        plus.setAttribute(
+            "aria-label",
+            `Увеличить количество: ${dish.name}`
+        );
+
+        plus.addEventListener("click", () => {
+            cart.set(id, quantity + 1);
+            updateCart();
+            renderCart();
+        });
+
+        const remove = document.createElement("button");
+        remove.className = "remove-button";
+        remove.textContent = "Удалить";
+
+        remove.addEventListener("click", () => {
+            cart.delete(id);
+            updateCart();
+            renderCart();
+        });
+
+        controls.append(minus, count, plus, remove);
+        card.append(info, controls);
+        grid.append(card);
+    });
+
+    const summary = document.createElement("div");
+    summary.className = "cart-summary";
+
+    const totalText = document.createElement("h3");
+    totalText.textContent = `Итого: ${formatPrice(total)}`;
+
+    const clearButton = document.createElement("button");
+    clearButton.className = "remove-button";
+    clearButton.textContent = "Очистить корзину";
+
+    clearButton.addEventListener("click", () => {
+        cart.clear();
+        updateCart();
+        renderCart();
+    });
+
+    summary.append(totalText, clearButton);
+    content.append(grid, summary);
+}
+
+function switchTab(tabName) {
+    currentTab = tabName;
+
+    tabs.forEach(tab => {
+        const isActive = tab.dataset.tab === tabName;
+
+        tab.classList.toggle("active", isActive);
+        tab.setAttribute("aria-selected", String(isActive));
+    });
+
+    if (tabName === "menu") {
+        renderMenu();
+    } else if (tabName === "promotions") {
+        renderPromotions();
+    } else if (tabName === "address") {
+        renderAddress();
+    } else if (tabName === "cart") {
+        renderCart();
+    }
+}
+
+tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+        switchTab(tab.dataset.tab);
+    });
+});
+
+switchTab(currentTab);
+updateCart();
