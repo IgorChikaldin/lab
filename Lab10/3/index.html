@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор приветствий</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Генератор приветствий</h1>
+
+        <input
+            type="text"
+            id="userName"
+            placeholder="Введите ваше имя"
+        >
+
+        <select id="template">
+            <option value="formal">Официальное</option>
+            <option value="friendly">Дружеское</option>
+            <option value="creative">Креативное</option>
+        </select>
+
+        <button id="generateBtn">
+            Создать приветствие
+        </button>
+
+        <button id="clearBtn">
+            Очистить
+        </button>
+
+        <div id="result"></div>
+        <div id="error"></div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
