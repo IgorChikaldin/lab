@@ -1,0 +1,31 @@
+
+import React from "react";
+import ProductCard from "./components/ProductCard";
+import "./App.css";
+
+function App() {
+  return (
+    <div className="app">
+      <h1>Магазин товаров</h1>
+
+      <div className="products">
+        <ProductCard
+          name="Беспроводные наушники"
+          price={15000}
+        />
+
+        <ProductCard
+          name="Умные часы"
+          price={25000}
+        />
+
+        <ProductCard
+          name="Портативная колонка"
+          price={12000}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default App;
