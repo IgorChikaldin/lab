@@ -1,0 +1,14 @@
+{
+  "name": "student-login",
+  "version": "1.0.0",
+  "description": "Личный кабинет студента",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2"
+  }
+}
