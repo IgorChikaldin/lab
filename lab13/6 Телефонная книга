@@ -1,0 +1,155 @@
+"""Лабораторная работа №13. Вариант 6: Телефонная книга.
+
+Структура данных: dict  имя -> телефон.
+Дополнительная функция: сохранение/загрузка в JSON + поиск по подстроке.
+"""
+import sys
+sys.stdout.reconfigure(encoding="utf-8")
+
+import json
+import os
+
+DB_FILE = "phonebook.json"
+
+
+def _normalize_phone(phone):
+    """Проверяет номер и возвращает его в чистом виде или None."""
+    phone = phone.strip()
+    digits = [c for c in phone if c.isdigit()]
+    allowed = set("0123456789+-() ")
+    if not (5 <= len(digits) <= 15) or not set(phone) <= allowed:
+        return None
+    return phone
+
+
+def _find_key(book, name):
+    """Ищет ключ без учета регистра; возвращает настоящий ключ или None."""
+    name = name.strip().lower()
+    for key in book:
+        if key.lower() == name:
+            return key
+    return None
+
+
+def add_contact(book, name, phone):
+    """Добавление. Возвращает (успех, сообщение)."""
+    name = name.strip()
+    if not name:
+        return False, "Имя не может быть пустым."
+    clean = _normalize_phone(phone)
+    if clean is None:
+        return False, "Некорректный номер телефона."
+    if _find_key(book, name) is not None:
+        return False, f"Контакт '{name}' уже существует (используйте изменение)."
+    book[name] = clean
+    return True, f"Контакт '{name}' добавлен."
+
+
+def find_contact(book, name):
+    """Точный поиск по имени. Возвращает номер или None."""
+    key = _find_key(book, name)
+    return book[key] if key is not None else None
+
+
+def search_contacts(book, fragment):
+    """Доп. функция: поиск по подстроке имени без учета регистра."""
+    fragment = fragment.strip().lower()
+    return {n: p for n, p in book.items() if fragment in n.lower()}
+
+
+def update_contact(book, name, new_phone):
+    """Изменение номера существующего контакта."""
+    key = _find_key(book, name)
+    if key is None:
+        return False, f"Контакт '{name.strip()}' не найден."
+    clean = _normalize_phone(new_phone)
+    if clean is None:
+        return False, "Некорректный номер телефона."
+    book[key] = clean
+    return True, f"Номер контакта '{key}' изменен."
+
+
+def delete_contact(book, name):
+    """Удаление контакта."""
+    key = _find_key(book, name)
+    if key is None:
+        return False, f"Контакт '{name.strip()}' не найден."
+    del book[key]
+    return True, f"Контакт '{key}' удален."
+
+
+def show_all(book):
+    """Список контактов, отсортированный по имени."""
+    return sorted(book.items(), key=lambda item: item[0].lower())
+
+
+def save_to_json(book, path=DB_FILE):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(book, f, ensure_ascii=False, indent=2)
+
+
+def load_from_json(path=DB_FILE):
+    """Пустая книга, если файла нет или он поврежден."""
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+MENU = """
+=== Телефонная книга ===
+1. Добавить контакт
+2. Найти контакт (точно)
+3. Поиск по части имени
+4. Изменить номер
+5. Удалить контакт
+6. Показать все
+0. Выход (с сохранением)
+"""
+
+
+def main():
+    book = load_from_json()
+    while True:
+        print(MENU)
+        choice = input("Выбор: ").strip()
+        if choice == "1":
+            ok, msg = add_contact(book, input("Имя: "), input("Телефон: "))
+            print(msg)
+        elif choice == "2":
+            name = input("Имя: ")
+            phone = find_contact(book, name)
+            print(f"{name.strip()}: {phone}" if phone else "Контакт не найден.")
+        elif choice == "3":
+            found = search_contacts(book, input("Часть имени: "))
+            if found:
+                for n, p in found.items():
+                    print(f"{n}: {p}")
+            else:
+                print("Ничего не найдено.")
+        elif choice == "4":
+            ok, msg = update_contact(book, input("Имя: "), input("Новый телефон: "))
+            print(msg)
+        elif choice == "5":
+            ok, msg = delete_contact(book, input("Имя: "))
+            print(msg)
+        elif choice == "6":
+            items = show_all(book)
+            if not items:
+                print("Телефонная книга пуста.")
+            for n, p in items:
+                print(f"{n}: {p}")
+        elif choice == "0":
+            save_to_json(book)
+            print("Данные сохранены в", DB_FILE)
+            break
+        else:
+            print("Неверный пункт меню.")
+
+
+if __name__ == "__main__":
+    main()
